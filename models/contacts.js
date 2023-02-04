@@ -31,6 +31,7 @@ const removeContact = async (contactId) => {
       return false;
     }
     await fs.writeFile(contactsPath, JSON.stringify(afterDelete));
+    return true;
   } catch (err) {
     console.error(err);
   }
@@ -42,7 +43,7 @@ const addContact = async ({ name, email, phone }) => {
   }
   try {
     const contacts = await listContacts();
-    const newContact = { name, email, phone, id: v4() };
+    const newContact = { id: v4(), name, email, phone };
     contacts.push(newContact);
     await fs.writeFile(contactsPath, JSON.stringify(contacts));
     return newContact;
@@ -54,16 +55,26 @@ const addContact = async ({ name, email, phone }) => {
 const updateContact = async (contactId, { name, email, phone }) => {
   try {
     const contacts = await listContacts();
+    const contactIndex = contacts.findIndex((item) => item.id === contactId);
+    if (contactIndex === -1) {
+      return false;
+    }
     contacts.forEach(async (cont) => {
       if (cont.id === contactId) {
-        cont.name = name;
-        cont.email = email;
-        cont.phone = phone;
+        if (name) {
+          cont.name = name;
+        }
+        if (email) {
+          cont.email = email;
+        }
+        if (phone) {
+          cont.phone = phone;
+        }
         await fs.writeFile(contactsPath, JSON.stringify(contacts));
-        return cont;
+        console.log(cont);
       }
-      return false;
     });
+    return true;
   } catch (err) {
     console.error(err);
   }
