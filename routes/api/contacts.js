@@ -7,6 +7,10 @@ const {
   updateContact,
 } = require("../../models/contacts.js");
 const { validation } = require("../../middlevares/validation");
+const {
+  newContactValidatoin,
+  updateContactValidation,
+} = require("../../schemas/validation");
 
 const router = express.Router();
 
@@ -30,7 +34,7 @@ router.get("/:contactId", async (req, res) => {
   }
 });
 
-router.post("/", validation, async (req, res) => {
+router.post("/", validation(newContactValidatoin), async (req, res) => {
   try {
     const newContact = await addContact(req.body);
     newContact
@@ -54,23 +58,27 @@ router.delete("/:contactId", async (req, res) => {
   }
 });
 
-router.put("/:contactId", validation, async (req, res) => {
-  try {
-    if (req.body.length === 0) {
-      res.status(400).json({ message: "Missing fields" });
-      return;
-    }
-    const contact = await updateContact(req.params.contactId, req.body);
-    console.log(contact);
+router.put(
+  "/:contactId",
+  validation(updateContactValidation),
+  async (req, res) => {
+    try {
+      if (req.body.length === 0) {
+        res.status(400).json({ message: "Missing fields" });
+        return;
+      }
+      const contact = await updateContact(req.params.contactId, req.body);
+      console.log(contact);
 
-    contact
-      ? res.status(200).json({
-          message: `Contact with ID ${req.params.contactId} is updated`,
-        })
-      : res.status(400).json({ message: "Not found" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+      contact
+        ? res.status(200).json({
+            message: `Contact with ID ${req.params.contactId} is updated`,
+          })
+        : res.status(400).json({ message: "Not found" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 module.exports = router;
