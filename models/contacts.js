@@ -27,20 +27,18 @@ const removeContact = async (contactId) => {
   try {
     const contacts = await listContacts();
     const afterDelete = contacts.filter((c) => c.id !== contactId);
+    const deletedContact = contacts.filter((c) => c.id === contactId);
     if (contacts.length === afterDelete.length) {
-      return false;
+      return null;
     }
     await fs.writeFile(contactsPath, JSON.stringify(afterDelete));
-    return true;
+    return deletedContact;
   } catch (err) {
     console.error(err);
   }
 };
 
 const addContact = async ({ name, email, phone }) => {
-  if (!name || !email || !phone) {
-    return false;
-  }
   try {
     const contacts = await listContacts();
     const newContact = { id: v4(), name, email, phone };
@@ -52,29 +50,31 @@ const addContact = async ({ name, email, phone }) => {
   }
 };
 
-const updateContact = async (contactId, { name, email, phone }) => {
+const updateContact = async (contactId, data) => {
   try {
     const contacts = await listContacts();
     const contactIndex = contacts.findIndex((item) => item.id === contactId);
     if (contactIndex === -1) {
-      return false;
+      return null;
     }
-    contacts.forEach(async (cont) => {
-      if (cont.id === contactId) {
-        if (name) {
-          cont.name = name;
-        }
-        if (email) {
-          cont.email = email;
-        }
-        if (phone) {
-          cont.phone = phone;
-        }
-        await fs.writeFile(contactsPath, JSON.stringify(contacts));
-        console.log(cont);
-      }
-    });
-    return true;
+    contacts[contactIndex] = { ...contacts[contactIndex], ...data };
+    // contacts.forEach(async (cont) => {
+    //   if (cont.id === contactId) {
+    //     if (name) {
+    //       cont.name = name;
+    //     }
+    //     if (email) {
+    //       cont.email = email;
+    //     }
+    //     if (phone) {
+    //       cont.phone = phone;
+    //     }
+    //     await fs.writeFile(contactsPath, JSON.stringify(contacts));
+    //     console.log(cont);
+    //   }
+    // });
+    await fs.writeFile(contactsPath, JSON.stringify(contacts));
+    return contacts[contactIndex];
   } catch (err) {
     console.error(err);
   }

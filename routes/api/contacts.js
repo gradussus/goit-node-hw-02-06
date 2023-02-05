@@ -41,7 +41,7 @@ router.post("/", validation(newContactValidatoin), async (req, res) => {
       ? res.status(201).json({ newContact })
       : res.status(400).json({ message: "Name, email and phone is required" });
   } catch (err) {
-    res.status(500).json({ error: err.message, asd: "asd" });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -73,6 +73,7 @@ router.put(
       contact
         ? res.status(200).json({
             message: `Contact with ID ${req.params.contactId} is updated`,
+            contact,
           })
         : res.status(400).json({ message: "Not found" });
     } catch (err) {
