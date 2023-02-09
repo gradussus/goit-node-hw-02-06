@@ -8,7 +8,8 @@ const listContactsService = async () => {
 
 const getContactByIdService = async (id) => {
   const contact = await Contact.findById(id);
-  if (!post) {
+  console.log(contact);
+  if (!contact) {
     // Додати обробку помилки, кастомну
   }
   return contact;
