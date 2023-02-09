@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const newContactValidatoin = Joi.object({
+const newContactValidation = Joi.object({
   name: Joi.string().min(1).max(30).required(),
   email: Joi.string().email().required(),
   phone: Joi.number().required(),
@@ -11,4 +11,4 @@ const updateContactValidation = Joi.object({
   email: Joi.string().email().optional(),
   phone: Joi.number().optional(),
 });
-module.exports = { newContactValidatoin, updateContactValidation };
+module.exports = { newContactValidation, updateContactValidation };

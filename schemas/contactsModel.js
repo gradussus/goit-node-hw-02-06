@@ -15,10 +15,14 @@ const contactSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const Contact = mongoose.model("Contact", contactSchema)
+const Contact = mongoose.model("Contact", contactSchema);
 
 module.exports = {
-    Contact
-}
+  Contact,
+};
