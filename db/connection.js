@@ -12,4 +12,4 @@ const connectMongo = async () => {
   });
 };
 
-module.exports = { connectMongo, getCollections };
+module.exports = { connectMongo };
