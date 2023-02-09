@@ -18,13 +18,13 @@ const getContactById = async (req, res) => {
   res.json({ contact });
 };
 
-const removeContact = async (res, req) => {
+const removeContact = async (req, res) => {
   const { id } = req.params;
   await removeContactService(id);
   res.json({ status: "success" });
 };
 
-const addContact = async (res, req) => {
+const addContact = async (req, res) => {
   const { name, phone, email } = req.body;
   await addContactService({ name, phone, email });
   res.json({ status: "success" });
