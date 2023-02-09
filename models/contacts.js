@@ -8,6 +8,7 @@ const {
 
 const listContacts = async (req, res) => {
   const contacts = await listContactsService();
+  // console.log(contacts);
   res.json({ contacts });
 };
 

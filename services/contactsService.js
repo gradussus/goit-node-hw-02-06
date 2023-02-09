@@ -2,6 +2,7 @@ const { Contact } = require("../schemas/contactsModel");
 
 const listContactsService = async () => {
   const contacts = await Contact.find({});
+  console.log(contacts);
   return contacts;
 };
 
