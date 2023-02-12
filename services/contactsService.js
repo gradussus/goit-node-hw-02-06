@@ -19,10 +19,16 @@ const addContactService = async ({ name, email, phone }) => {
   await contact.save();
   return contact;
 };
+
 const updateContactService = async (id, { name, phone, email }) => {
   const isUpdated = await Contact.findByIdAndUpdate(id, {
     $set: { name, phone, email },
   });
+  return isUpdated;
+};
+
+const updateStatusContactService = async (id, { favorite }) => {
+  const isUpdated = await Contact.findByIdAndUpdate(id, { $set: { favorite } });
   return isUpdated;
 };
 
@@ -32,4 +38,5 @@ module.exports = {
   removeContactService,
   addContactService,
   updateContactService,
+  updateStatusContactService,
 };

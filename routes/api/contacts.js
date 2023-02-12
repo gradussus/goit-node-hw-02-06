@@ -6,13 +6,18 @@ const {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 } = require("../../models/contacts.js");
-const { validation } = require("../../middlevares/validation");
+const {
+  validation,
+  favoriteValidation,
+} = require("../../middlevares/validation");
 const {
   newContactValidation,
   updateContactValidation,
+  updateFavoriteValidation,
 } = require("../../schemas/validation");
-const { isValidId } = require("../../middlevares/asd");
+const { isValidId } = require("../../middlevares/IdValidation");
 
 const router = express.Router();
 
@@ -29,6 +34,13 @@ router.put(
   validation(updateContactValidation),
   isValidId,
   asyncWrapper(updateContact)
+);
+
+router.patch(
+  "/:contactId/favorite",
+  favoriteValidation(updateFavoriteValidation),
+  isValidId,
+  asyncWrapper(updateStatusContact)
 );
 
 module.exports = router;

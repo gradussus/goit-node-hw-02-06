@@ -4,6 +4,7 @@ const {
   removeContactService,
   addContactService,
   updateContactService,
+  updateStatusContactService,
 } = require("../services/contactsService");
 
 const listContacts = async (req, res) => {
@@ -27,7 +28,7 @@ const removeContact = async (req, res) => {
     res.status(404).json({ message: "Not found" });
     return;
   }
-  res.json({ message: `Contact with if ${contactId} deleted succuessfully` });
+  res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });
 };
 // 63e4ee729f321543bb0c9cbd
 const addContact = async (req, res) => {
@@ -51,10 +52,22 @@ const updateContact = async (req, res) => {
   res.json({ message: `Contact with ID ${contactId} is updated` });
 };
 
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  const isUpdate = await updateStatusContactService(contactId, { favorite });
+  if (!isUpdate) {
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
+  res.json({ message: `Contact with ID ${contactId} is updated` });
+};
+
 module.exports = {
   listContacts,
   getContactById,
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };

@@ -1,15 +1,12 @@
 const mongoose = require("mongoose");
-// mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);
 
 const connectMongo = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://gradussus:123putinhuilo321@phonebook.kvavdxk.mongodb.net/goit?retryWrites=true&w=majority",
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
+    await mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log("Database connection successful");
   } catch (error) {
     console.error(error);

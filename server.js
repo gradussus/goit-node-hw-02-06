@@ -1,10 +1,11 @@
 const app = require("./app");
+require("dotenv").config();
 const { connectMongo } = require("./db/connection");
 
 const start = async () => {
   try {
     await connectMongo();
-    
+
     app.listen(3000, (error) => {
       if (error) {
         console.error("Error at server", error);
