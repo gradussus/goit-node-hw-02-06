@@ -12,20 +12,22 @@ const {
   newContactValidation,
   updateContactValidation,
 } = require("../../schemas/validation");
+const { isValidId } = require("../../middlevares/asd");
 
 const router = express.Router();
 
 router.get("/", asyncWrapper(listContacts));
 
-router.get("/:contactId", asyncWrapper(getContactById));
+router.get("/:contactId", isValidId, asyncWrapper(getContactById));
 
 router.post("/", validation(newContactValidation), asyncWrapper(addContact));
 
-router.delete("/:contactId", asyncWrapper(removeContact));
+router.delete("/:contactId", isValidId, asyncWrapper(removeContact));
 
 router.put(
   "/:contactId",
   validation(updateContactValidation),
+  isValidId,
   asyncWrapper(updateContact)
 );
 

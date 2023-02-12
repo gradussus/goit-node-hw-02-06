@@ -14,15 +14,22 @@ const listContacts = async (req, res) => {
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
   const contact = await getContactByIdService(contactId);
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+  }
   res.json({ contact });
 };
 
 const removeContact = async (req, res) => {
-  const { id } = req.params;
-  await removeContactService(id);
-  res.json({ status: "success" });
+  const { contactId } = req.params;
+  const isContactDeleted = await removeContactService(contactId);
+  if (!isContactDeleted) {
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
+  res.json({ message: `Contact with if ${contactId} deleted succuessfully` });
 };
-
+// 63e4ee729f321543bb0c9cbd
 const addContact = async (req, res) => {
   const { name, phone, email } = req.body;
   await addContactService({ name, phone, email });
@@ -30,10 +37,18 @@ const addContact = async (req, res) => {
 };
 
 const updateContact = async (req, res) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
   const { name, phone, email } = req.body;
-  await updateContactService(id, { name, phone, email });
-  res.json({ status: "success" });
+  const isUpdate = await updateContactService(contactId, {
+    name,
+    phone,
+    email,
+  });
+  if (!isUpdate) {
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
+  res.json({ message: `Contact with ID ${contactId} is updated` });
 };
 
 module.exports = {
