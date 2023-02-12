@@ -5,5 +5,3 @@ const asyncWrapper = (controller) => {
 };
 
 module.exports = { asyncWrapper };
-
-// res.status(500).json({ error: err.message });

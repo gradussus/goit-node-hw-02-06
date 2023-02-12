@@ -8,13 +8,11 @@ const {
 
 const listContacts = async (req, res) => {
   const contacts = await listContactsService();
-  // console.log(contacts);
   res.json({ contacts });
 };
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
-  console.log(req.params);
   const contact = await getContactByIdService(contactId);
   res.json({ contact });
 };
