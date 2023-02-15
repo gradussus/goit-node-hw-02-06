@@ -2,30 +2,34 @@ const { Contact } = require("../schemas/contactsModel");
 
 const listContactsService = async () => {
   const contacts = await Contact.find({});
-  console.log(contacts);
   return contacts;
 };
 
 const getContactByIdService = async (id) => {
   const contact = await Contact.findById(id);
-  console.log(contact);
-  if (!contact) {
-    // Додати обробку помилки, кастомну
-  }
   return contact;
 };
 const removeContactService = async (id) => {
-  // Додати обробку помилки, кастомну
-  await Contact.findByIdAndRemove(id);
+  const contact = await Contact.findByIdAndRemove(id);
+  return contact;
 };
 
 const addContactService = async ({ name, email, phone }) => {
   const contact = new Contact({ name, email, phone });
   await contact.save();
+  return contact;
 };
+
 const updateContactService = async (id, { name, phone, email }) => {
-  // Додати обробку помилки, кастомну
-  await Contact.findByIdAndUpdate(id, { $set: { name, phone, email } });
+  const isUpdated = await Contact.findByIdAndUpdate(id, {
+    $set: { name, phone, email },
+  });
+  return isUpdated;
+};
+
+const updateStatusContactService = async (id, { favorite }) => {
+  const isUpdated = await Contact.findByIdAndUpdate(id, { $set: { favorite } });
+  return isUpdated;
 };
 
 module.exports = {
@@ -34,4 +38,5 @@ module.exports = {
   removeContactService,
   addContactService,
   updateContactService,
+  updateStatusContactService,
 };

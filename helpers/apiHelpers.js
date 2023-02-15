@@ -9,5 +9,3 @@ const errorHandler = (err, req, res, next) => {
 };
 
 module.exports = { asyncWrapper, errorHandler };
-
-// res.status(500).json({ error: err.message });

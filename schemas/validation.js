@@ -13,4 +13,12 @@ const updateContactValidation = Joi.object({
   phone: Joi.number().optional(),
   favorite: Joi.boolean().optional(),
 });
-module.exports = { newContactValidation, updateContactValidation };
+
+const updateFavoriteValidation = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+module.exports = {
+  newContactValidation,
+  updateContactValidation,
+  updateFavoriteValidation,
+};
