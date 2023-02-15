@@ -34,7 +34,7 @@ const removeContact = async (req, res) => {
   }
   res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });
 };
-// 63e4ee729f321543bb0c9cbd
+
 const addContact = async (req, res) => {
   const { name, phone, email } = req.body;
   const contact = await addContactService({ name, phone, email });
@@ -59,12 +59,12 @@ const updateContact = async (req, res) => {
 const updateStatusContact = async (req, res) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
-  const isUpdate = await updateStatusContactService(contactId, { favorite });
-  if (!isUpdate) {
+  const contact = await updateStatusContactService(contactId, { favorite });
+  if (!contact) {
     res.status(404).json({ message: "Not found" });
     return;
   }
-  res.json({ message: `Contact with ID ${contactId} is updated` });
+  res.json({ contact });
 };
 
 module.exports = {
