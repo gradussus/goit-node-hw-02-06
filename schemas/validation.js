@@ -12,7 +12,7 @@ const updateContactValidation = Joi.object({
   email: Joi.string().email().optional(),
   phone: Joi.number().optional(),
   favorite: Joi.boolean().optional(),
-});
+}).min(1);
 
 const updateFavoriteValidation = Joi.object({
   favorite: Joi.boolean().required(),

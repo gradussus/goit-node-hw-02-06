@@ -24,12 +24,20 @@ const updateContactService = async (id, { name, phone, email }) => {
   const isUpdated = await Contact.findByIdAndUpdate(id, {
     $set: { name, phone, email },
   });
-  return isUpdated;
+  if (!isUpdated) {
+    return null;
+  }
+  const contact = await Contact.findById(id);
+  return contact;
 };
 
 const updateStatusContactService = async (id, { favorite }) => {
   const isUpdated = await Contact.findByIdAndUpdate(id, { $set: { favorite } });
-  return isUpdated;
+  if (!isUpdated) {
+    return null;
+  }
+  const contact = await Contact.findById(id);
+  return contact;
 };
 
 module.exports = {
