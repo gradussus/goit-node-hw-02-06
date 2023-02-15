@@ -8,21 +8,24 @@ const {
 
 const listContacts = async (req, res) => {
   const contacts = await listContactsService();
-  // console.log(contacts);
+
   res.json({ contacts });
 };
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
-  console.log(req.params);
   const contact = await getContactByIdService(contactId);
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
   res.json({ contact });
 };
 
 const removeContact = async (req, res) => {
   const { id } = req.params;
   await removeContactService(id);
-  res.json({ status: "success" });
+  res.status(201).json({ status: "success" });
 };
 
 const addContact = async (req, res) => {

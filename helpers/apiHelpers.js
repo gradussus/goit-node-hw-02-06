@@ -4,6 +4,10 @@ const asyncWrapper = (controller) => {
   };
 };
 
-module.exports = { asyncWrapper };
+const errorHandler = (err, req, res, next) => {
+  res.status(500).json({ message: err.message });
+};
+
+module.exports = { asyncWrapper, errorHandler };
 
 // res.status(500).json({ error: err.message });
