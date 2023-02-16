@@ -1,83 +1,67 @@
-const fs = require("fs").promises;
-const path = require("path");
-const { v4 } = require("uuid");
+const {
+  listContactsService,
+  getContactByIdService,
+  removeContactService,
+  addContactService,
+  updateContactService,
+  updateStatusContactService,
+} = require("../services/contactsService");
 
-const contactsPath = path.resolve("./models/contacts.json");
-
-const listContacts = async () => {
-  try {
-    const contacts = await fs.readFile(contactsPath);
-    return JSON.parse(contacts);
-  } catch (err) {
-    console.error(err);
-  }
+const listContacts = async (req, res) => {
+  const contacts = await listContactsService();
+  res.json(contacts);
 };
 
-const getContactById = async (contactId) => {
-  try {
-    const contacts = await listContacts();
-    const [desiredContacts] = contacts.filter((c) => c.id === contactId);
-    return desiredContacts;
-  } catch (err) {
-    console.error(err);
+const getContactById = async (req, res) => {
+  const { contactId } = req.params;
+  const contact = await getContactByIdService(contactId);
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+    return;
   }
+  res.json(contact);
 };
 
-const removeContact = async (contactId) => {
-  try {
-    const contacts = await listContacts();
-    const afterDelete = contacts.filter((c) => c.id !== contactId);
-    const deletedContact = contacts.filter((c) => c.id === contactId);
-    if (contacts.length === afterDelete.length) {
-      return null;
-    }
-    await fs.writeFile(contactsPath, JSON.stringify(afterDelete));
-    return deletedContact;
-  } catch (err) {
-    console.error(err);
+const removeContact = async (req, res) => {
+  const { contactId } = req.params;
+  const isContactDeleted = await removeContactService(contactId);
+  if (!isContactDeleted) {
+    res.status(404).json({ message: "Not found" });
+    return;
   }
+  res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });
 };
 
-const addContact = async ({ name, email, phone }) => {
-  try {
-    const contacts = await listContacts();
-    const newContact = { id: v4(), name, email, phone };
-    contacts.push(newContact);
-    await fs.writeFile(contactsPath, JSON.stringify(contacts));
-    return newContact;
-  } catch (err) {
-    console.error(err);
-  }
+const addContact = async (req, res) => {
+  const { name, phone, email } = req.body;
+  const contact = await addContactService({ name, phone, email });
+  res.status(201).json(contact);
 };
 
-const updateContact = async (contactId, data) => {
-  try {
-    const contacts = await listContacts();
-    const contactIndex = contacts.findIndex((item) => item.id === contactId);
-    if (contactIndex === -1) {
-      return null;
-    }
-    contacts[contactIndex] = { ...contacts[contactIndex], ...data };
-    // contacts.forEach(async (cont) => {
-    //   if (cont.id === contactId) {
-    //     if (name) {
-    //       cont.name = name;
-    //     }
-    //     if (email) {
-    //       cont.email = email;
-    //     }
-    //     if (phone) {
-    //       cont.phone = phone;
-    //     }
-    //     await fs.writeFile(contactsPath, JSON.stringify(contacts));
-    //     console.log(cont);
-    //   }
-    // });
-    await fs.writeFile(contactsPath, JSON.stringify(contacts));
-    return contacts[contactIndex];
-  } catch (err) {
-    console.error(err);
+const updateContact = async (req, res) => {
+  const { contactId } = req.params;
+  const { name, phone, email } = req.body;
+  const contact = await updateContactService(contactId, {
+    name,
+    phone,
+    email,
+  });
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+    return;
   }
+  res.json(contact);
+};
+
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  const contact = await updateStatusContactService(contactId, { favorite });
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
+  res.json(contact);
 };
 
 module.exports = {
@@ -86,4 +70,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };

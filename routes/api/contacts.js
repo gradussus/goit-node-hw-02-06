@@ -1,3 +1,4 @@
+const { asyncWrapper } = require("../../helpers/apiHelpers");
 const express = require("express");
 const {
   listContacts,
@@ -5,81 +6,41 @@ const {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 } = require("../../models/contacts.js");
-const { validation } = require("../../middlevares/validation");
 const {
-  newContactValidatoin,
+  validation,
+  favoriteValidation,
+} = require("../../middlevares/validation");
+const {
+  newContactValidation,
   updateContactValidation,
+  updateFavoriteValidation,
 } = require("../../schemas/validation");
+const { isValidId } = require("../../middlevares/IdValidation");
 
 const router = express.Router();
 
-router.get("/", async (_, res) => {
-  try {
-    const contacts = await listContacts();
-    res.status(200).json({ contacts });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.get("/", asyncWrapper(listContacts));
 
-router.get("/:contactId", async (req, res) => {
-  try {
-    const contact = await getContactById(req.params.contactId);
-    contact
-      ? res.status(200).json({ contact })
-      : res.status(404).json({ message: "Not found" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.get("/:contactId", isValidId, asyncWrapper(getContactById));
 
-router.post("/", validation(newContactValidatoin), async (req, res) => {
-  try {
-    const newContact = await addContact(req.body);
-    newContact
-      ? res.status(201).json({ newContact })
-      : res.status(400).json({ message: "Name, email and phone is required" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.post("/", validation(newContactValidation), asyncWrapper(addContact));
 
-router.delete("/:contactId", async (req, res) => {
-  try {
-    const isRemoved = removeContact(req.params.contactId);
-    isRemoved
-      ? res.status(200).json({
-          message: `Contact with id ${req.params.contactId} is deleted`,
-        })
-      : res.status(404).json({ message: "Not found" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.delete("/:contactId", isValidId, asyncWrapper(removeContact));
 
 router.put(
   "/:contactId",
   validation(updateContactValidation),
-  async (req, res) => {
-    try {
-      if (req.body.length === 0) {
-        res.status(400).json({ message: "Missing fields" });
-        return;
-      }
-      const contact = await updateContact(req.params.contactId, req.body);
-      console.log(contact);
+  isValidId,
+  asyncWrapper(updateContact)
+);
 
-      contact
-        ? res.status(200).json({
-            message: `Contact with ID ${req.params.contactId} is updated`,
-            contact,
-          })
-        : res.status(400).json({ message: "Not found" });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
+router.patch(
+  "/:contactId/favorite",
+  favoriteValidation(updateFavoriteValidation),
+  isValidId,
+  asyncWrapper(updateStatusContact)
 );
 
 module.exports = router;
