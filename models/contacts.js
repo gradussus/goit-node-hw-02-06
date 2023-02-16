@@ -9,7 +9,7 @@ const {
 
 const listContacts = async (req, res) => {
   const contacts = await listContactsService();
-  res.json({ contacts });
+  res.json(contacts);
 };
 
 const getContactById = async (req, res) => {
@@ -19,13 +19,10 @@ const getContactById = async (req, res) => {
     res.status(404).json({ message: "Not found" });
     return;
   }
-  res.json({ contact });
+  res.json(contact);
 };
 
 const removeContact = async (req, res) => {
-  const { id } = req.params;
-  await removeContactService(id);
-  res.status(201).json({ status: "success" });
   const { contactId } = req.params;
   const isContactDeleted = await removeContactService(contactId);
   if (!isContactDeleted) {
@@ -38,7 +35,7 @@ const removeContact = async (req, res) => {
 const addContact = async (req, res) => {
   const { name, phone, email } = req.body;
   const contact = await addContactService({ name, phone, email });
-  res.json({ contact });
+  res.status(201).json(contact);
 };
 
 const updateContact = async (req, res) => {
@@ -53,7 +50,7 @@ const updateContact = async (req, res) => {
     res.status(404).json({ message: "Not found" });
     return;
   }
-  res.json({ contact });
+  res.json(contact);
 };
 
 const updateStatusContact = async (req, res) => {
@@ -64,7 +61,7 @@ const updateStatusContact = async (req, res) => {
     res.status(404).json({ message: "Not found" });
     return;
   }
-  res.json({ contact });
+  res.json(contact);
 };
 
 module.exports = {

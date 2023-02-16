@@ -21,22 +21,22 @@ const addContactService = async ({ name, email, phone }) => {
 };
 
 const updateContactService = async (id, { name, phone, email }) => {
-  const isUpdated = await Contact.findByIdAndUpdate(id, {
-    $set: { name, phone, email },
-  });
-  if (!isUpdated) {
-    return null;
-  }
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findByIdAndUpdate(
+    id,
+    {
+      $set: { name, phone, email },
+    },
+    { new: true }
+  );
   return contact;
 };
 
 const updateStatusContactService = async (id, { favorite }) => {
-  const isUpdated = await Contact.findByIdAndUpdate(id, { $set: { favorite } });
-  if (!isUpdated) {
-    return null;
-  }
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findByIdAndUpdate(
+    id,
+    { $set: { favorite } },
+    { new: true }
+  );
   return contact;
 };
 
