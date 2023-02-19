@@ -1,4 +1,4 @@
-const validation = (schema) => {
+const contactValidation = (schema) => {
   return (req, res, next) => {
     const result = schema.validate(req.body);
     if (result.error) {
@@ -8,7 +8,7 @@ const validation = (schema) => {
   };
 };
 
-const favoriteValidation = (schema) => {
+const favoriteContactValidation = (schema) => {
   return (req, res, next) => {
     const result = schema.validate(req.body);
     if (result.error) {
@@ -18,4 +18,4 @@ const favoriteValidation = (schema) => {
   };
 };
 
-module.exports = { validation, favoriteValidation };
+module.exports = { contactValidation, favoriteContactValidation };

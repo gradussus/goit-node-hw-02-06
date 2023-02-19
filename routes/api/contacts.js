@@ -9,14 +9,14 @@ const {
   updateStatusContact,
 } = require("../../models/contacts.js");
 const {
-  validation,
-  favoriteValidation,
-} = require("../../middlevares/validation");
+  contactValidation,
+  favoriteContactValidation,
+} = require("../../middlevares/contactValidation");
 const {
   newContactValidation,
   updateContactValidation,
   updateFavoriteValidation,
-} = require("../../schemas/validation");
+} = require("../../schemas/validationJoi");
 const { isValidId } = require("../../middlevares/IdValidation");
 
 const router = express.Router();
@@ -25,20 +25,24 @@ router.get("/", asyncWrapper(listContacts));
 
 router.get("/:contactId", isValidId, asyncWrapper(getContactById));
 
-router.post("/", validation(newContactValidation), asyncWrapper(addContact));
+router.post(
+  "/",
+  contactValidation(newContactValidation),
+  asyncWrapper(addContact)
+);
 
 router.delete("/:contactId", isValidId, asyncWrapper(removeContact));
 
 router.put(
   "/:contactId",
-  validation(updateContactValidation),
+  contactValidation(updateContactValidation),
   isValidId,
   asyncWrapper(updateContact)
 );
 
 router.patch(
   "/:contactId/favorite",
-  favoriteValidation(updateFavoriteValidation),
+  favoriteContactValidation(updateFavoriteValidation),
   isValidId,
   asyncWrapper(updateStatusContact)
 );
