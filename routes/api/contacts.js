@@ -18,8 +18,11 @@ const {
   updateFavoriteValidation,
 } = require("../../schemas/validationJoi");
 const { isValidId } = require("../../middlevares/IdValidation");
+const { authMiddleware } = require("../../middlevares/authMiddlevare");
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.get("/", asyncWrapper(listContacts));
 
