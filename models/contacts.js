@@ -8,7 +8,8 @@ const {
 } = require("../services/contactsService");
 
 const listContacts = async (req, res) => {
-  const contacts = await listContactsService();
+  const { _id } = req.user;
+  const contacts = await listContactsService(_id);
   res.json(contacts);
 };
 
@@ -33,8 +34,9 @@ const removeContact = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
+  const { _id } = req.user;
   const { name, phone, email } = req.body;
-  const contact = await addContactService({ name, phone, email });
+  const contact = await addContactService({ name, phone, email }, _id);
   res.status(201).json(contact);
 };
 

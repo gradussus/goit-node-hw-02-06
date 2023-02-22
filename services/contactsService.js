@@ -1,7 +1,8 @@
 const { Contact } = require("../schemas/contactsModel");
 
-const listContactsService = async () => {
-  const contacts = await Contact.find({});
+const listContactsService = async (owner) => {
+  const contacts = await Contact.find({ owner });
+  console.log(owner);
   return contacts;
 };
 
@@ -14,8 +15,8 @@ const removeContactService = async (id) => {
   return contact;
 };
 
-const addContactService = async ({ name, email, phone }) => {
-  const contact = new Contact({ name, email, phone });
+const addContactService = async ({ name, email, phone }, owner) => {
+  const contact = new Contact({ name, email, phone, owner });
   await contact.save();
   return contact;
 };

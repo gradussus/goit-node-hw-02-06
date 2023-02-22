@@ -25,6 +25,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
   const { _id } = req.user;
   await logoutUserService(_id);
+  req.user = null;
   res.status(204).send();
 };
 
