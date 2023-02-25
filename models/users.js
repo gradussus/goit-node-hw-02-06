@@ -7,11 +7,6 @@ const {
 
 const signupUser = async (req, res) => {
   const { email, password } = req.body;
-
-  if (await User.findOne({ email })) {
-    res.status(409).json({ code: 409, message: "Email in use" });
-    return;
-  }
   const user = await signupUserService(email, password);
   res.status(201).json({ email: user.email, subscription: user.subscription });
 };

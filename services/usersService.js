@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User } = require("../schemas/userModel");
+const { ConflictError, UnauthorizedError } = require("../helpers/errors");
 
 const signupUserService = async (email, password) => {
   if (await User.findOne({ email })) {
-    // додати обробку помилок нормальну
-    throw new Error("Email in use", { statusCode: 409 });
+    throw new ConflictError("Email in use");
   }
 
   const user = new User({
@@ -23,11 +23,11 @@ const loginUserService = async (email, password) => {
   console.log(user);
 
   if (!user) {
-    throw new Error("Email or password is wrong", { statusCode: 400 });
+    throw new UnauthorizedError("Email or password is wrong");
   }
 
   if (!(await bcrypt.compare(password, user.password))) {
-    throw new Error("Email or password is wrong", { statusCode: 400 });
+    throw new UnauthorizedError("Email or password is wrong");
   }
 
   const token = jwt.sign(

@@ -7,6 +7,8 @@ const {
   updateStatusContactService,
 } = require("../services/contactsService");
 
+const { NotFoundError } = require("../helpers/errors");
+
 const listContacts = async (req, res) => {
   const { _id } = req.user;
   const contacts = await listContactsService(_id);
@@ -18,10 +20,9 @@ const getContactById = async (req, res) => {
   const { _id } = req.user;
   const contact = await getContactByIdService(contactId, _id);
   if (contact.length === 0) {
-    res.status(404).json({ message: "Not found" });
-    return;
+    throw new NotFoundError("Not found");
   }
-  res.json(contact);
+  res.json(contact[0]);
 };
 
 const removeContact = async (req, res) => {
@@ -29,8 +30,7 @@ const removeContact = async (req, res) => {
   const { _id } = req.user;
   const isContactDeleted = await removeContactService(contactId, _id);
   if (!isContactDeleted) {
-    res.status(404).json({ message: "Not found" });
-    return;
+    throw new NotFoundError("Not found");
   }
   res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });
 };
@@ -56,8 +56,7 @@ const updateContact = async (req, res) => {
     _id
   );
   if (!contact) {
-    res.status(404).json({ message: "Not found" });
-    return;
+    throw new NotFoundError("Not found");
   }
   res.json(contact);
 };
@@ -72,8 +71,7 @@ const updateStatusContact = async (req, res) => {
     _id
   );
   if (!contact) {
-    res.status(404).json({ message: "Not found" });
-    return;
+    throw new NotFoundError("Not found");
   }
   res.json(contact);
 };
