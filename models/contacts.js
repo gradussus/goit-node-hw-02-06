@@ -11,7 +11,8 @@ const { NotFoundError } = require("../helpers/errors");
 
 const listContacts = async (req, res) => {
   const { _id } = req.user;
-  const contacts = await listContactsService(_id);
+  const { page, limit, favorite } = req.query;
+  const contacts = await listContactsService(_id, page, limit, favorite);
   res.json(contacts);
 };
 

@@ -1,8 +1,15 @@
 const { Contact } = require("../schemas/contactsModel");
 
-const listContactsService = async (owner) => {
-  const contacts = await Contact.find({ owner });
-  console.log(owner);
+const listContactsService = async (owner, page = 1, limit = 100, favorite) => {
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+
+  if (favorite) {
+    const contacts = await Contact.find({ $and: [{ owner }, { favorite }] })
+      .skip(skip)
+      .limit(limit);
+    return contacts;
+  }
+  const contacts = await Contact.find({ owner }).skip(skip).limit(limit);
   return contacts;
 };
 

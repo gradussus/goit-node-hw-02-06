@@ -5,7 +5,7 @@ const { ConflictError, UnauthorizedError } = require("../helpers/errors");
 
 const signupUserService = async (email, password) => {
   if (await User.findOne({ email })) {
-    throw new ConflictError("Email in use");
+    throw new ConflictError("Email is use");
   }
 
   const user = new User({
@@ -18,9 +18,7 @@ const signupUserService = async (email, password) => {
 };
 
 const loginUserService = async (email, password) => {
-  console.log(email, password);
   const user = await User.findOne({ email });
-  console.log(user);
 
   if (!user) {
     throw new UnauthorizedError("Email or password is wrong");
@@ -60,9 +58,20 @@ const currentUserService = async (id) => {
   return user;
 };
 
+const updateUserService = async (id, subscription) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { $set: { subscription } },
+    { new: true }
+  );
+  console.log(user);
+  return user;
+};
+
 module.exports = {
   signupUserService,
   loginUserService,
   logoutUserService,
   currentUserService,
+  updateUserService,
 };

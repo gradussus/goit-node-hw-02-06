@@ -7,6 +7,7 @@ const {
   loginUser,
   logoutUser,
   currentUser,
+  updateUser,
 } = require("../models/users");
 
 const { loginValidation } = require("../middlevares/loginValidation");
@@ -30,5 +31,7 @@ router.post(
 router.get("/logout", authMiddleware, asyncWrapper(logoutUser));
 
 router.get("/current", authMiddleware, asyncWrapper(currentUser));
+
+router.patch("/", authMiddleware, asyncWrapper(updateUser));
 
 module.exports = router;
