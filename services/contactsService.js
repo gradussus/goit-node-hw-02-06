@@ -3,22 +3,17 @@ const { Contact } = require("../schemas/contactsModel");
 const listContactsService = async (owner, page = 1, limit = 100, favorite) => {
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  if (!favorite) {
-    const contacts = await Contact.find({ owner }, "", {
-      skip,
-      limit,
-    });
-    return contacts;
+  let options = { owner };
+
+  if (favorite) {
+    const isFavorite = JSON.parse(favorite);
+    options = { $and: [{ owner }, { favorite: isFavorite }] };
   }
-  const isFavorite = JSON.parse(favorite);
-  const contacts = await Contact.find(
-    { $and: [{ owner }, { favorite: isFavorite }] },
-    "",
-    {
-      skip,
-      limit,
-    }
-  );
+
+  const contacts = await Contact.find(options, "", {
+    skip,
+    limit,
+  });
   return contacts;
 };
 

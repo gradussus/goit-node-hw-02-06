@@ -8,10 +8,17 @@ const authMiddleware = async (req, res, next) => {
     next(new UnauthorizedError("We need Authorization header "));
     return;
   }
+  const [tokenType, token] = req.headers["authorization"].split(" ");
+  if (tokenType !== "Bearer") {
+    next(new UnauthorizedError("We need tokenType - Bearer"));
+    return;
+  }
+  if (!token) {
+    next(new UnauthorizedError("We need token"));
+    return;
+  }
 
   try {
-    const [tokenType, token] = req.headers["authorization"].split(" ");
-
     const { _id } = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(_id);
