@@ -2,26 +2,22 @@ const {
   signupUserService,
   loginUserService,
   logoutUserService,
-  currentUserService,
   updateUserService,
 } = require("../services/usersService");
 
 const { NotFoundError } = require("../helpers/errors");
 
 const signupUser = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await signupUserService(email, password);
-  res.status(201).json({ email: user.email, subscription: user.subscription });
+  const { email, password, subscription = "starter" } = req.body;
+  const user = await signupUserService(email, password, subscription);
+  res.status(201).json(user);
 };
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await loginUserService(email, password);
-  res.status(200).json({
-    token: user.token,
-    user: { email: user.email, subscription: user.subscription },
-  });
+  res.json(user);
 };
 
 const logoutUser = async (req, res) => {
@@ -32,10 +28,8 @@ const logoutUser = async (req, res) => {
 };
 
 const currentUser = async (req, res) => {
-  const { _id } = req.user;
-  const user = await currentUserService(_id);
-
-  res.status(200).json(user);
+  const { email, subscription } = req.user;
+  res.status(200).json({ email, subscription });
 };
 
 const updateUser = async (req, res) => {

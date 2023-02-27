@@ -27,18 +27,26 @@ const getContactById = async (req, res) => {
 };
 
 const removeContact = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
-  const contact = await removeContactService(contactId);
+  const contact = await removeContactService(contactId, _id);
+  console.log(contact);
   if (!contact) {
     throw new NotFoundError("Not found");
   }
-  res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });
+  res.json({
+    message: `Contact with ID ${contactId} deleted succuessfully`,
+    contact,
+  });
 };
 
 const addContact = async (req, res) => {
   const { _id } = req.user;
-  const { name, phone, email } = req.body;
-  const contact = await addContactService({ name, phone, email }, _id);
+  const { name, phone, email, favorite } = req.body;
+  const contact = await addContactService(
+    { name, phone, email, favorite },
+    _id
+  );
   res.status(201).json(contact);
 };
 

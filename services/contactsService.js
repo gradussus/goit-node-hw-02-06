@@ -28,13 +28,15 @@ const getContactByIdService = async (contactId, owner) => {
   });
   return contact;
 };
-const removeContactService = async (contactId) => {
-  const contact = await Contact.findByIdAndDelete(contactId);
+const removeContactService = async (contactId, owner) => {
+  const contact = await Contact.findOneAndDelete({
+    $and: [{ owner }, { _id: contactId }],
+  });
   return contact;
 };
 
-const addContactService = async ({ name, email, phone }, owner) => {
-  const contact = new Contact({ name, email, phone, owner });
+const addContactService = async ({ name, email, phone, favorite }, owner) => {
+  const contact = new Contact({ name, email, phone, owner, favorite });
   await contact.save();
   return contact;
 };

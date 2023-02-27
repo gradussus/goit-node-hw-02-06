@@ -5,27 +5,28 @@ const { User } = require("../schemas/userModel");
 
 const authMiddleware = async (req, res, next) => {
   if (!req.headers["authorization"]) {
-    next(new UnauthorizedError("We need token"));
-    return;
-  }
-  const [tokenType, token] = req.headers["authorization"].split(" ");
-
-  if (!token) {
-    next(new UnauthorizedError("We need token"));
-    return;
-  }
-  const { id } = jwt.verify(token, process.env.JWT_SECRET);
-
-  const user = await User.findById(id);
-
-  if (!user || token !== user.token) {
-    next(new UnauthorizedError("Not authorized"));
+    next(new UnauthorizedError("We need Authorization header "));
     return;
   }
 
-  req.user = user;
+  try {
+    const [tokenType, token] = req.headers["authorization"].split(" ");
 
-  next();
+    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(_id);
+
+    if (!user || token !== user.token) {
+      next(new UnauthorizedError("Not authorized"));
+      return;
+    }
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
