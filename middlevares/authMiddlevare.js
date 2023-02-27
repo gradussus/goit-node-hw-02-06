@@ -14,12 +14,9 @@ const authMiddleware = async (req, res, next) => {
     next(new UnauthorizedError("We need token"));
     return;
   }
-  if (!jwt.decode(token, process.env.JWT_SECRET)) {
-    next(new UnauthorizedError("Wrong token"));
-    return;
-  }
-  const { _id } = jwt.decode(token, process.env.JWT_SECRET);
-  const user = await User.findById(_id);
+  const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+  const user = await User.findById(id);
 
   if (!user || token !== user.token) {
     next(new UnauthorizedError("Not authorized"));

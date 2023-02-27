@@ -20,17 +20,16 @@ const getContactById = async (req, res) => {
   const { contactId } = req.params;
   const { _id } = req.user;
   const contact = await getContactByIdService(contactId, _id);
-  if (contact.length === 0) {
+  if (!contact) {
     throw new NotFoundError("Not found");
   }
-  res.json(contact[0]);
+  res.json(contact);
 };
 
 const removeContact = async (req, res) => {
   const { contactId } = req.params;
-  const { _id } = req.user;
-  const isContactDeleted = await removeContactService(contactId, _id);
-  if (!isContactDeleted) {
+  const contact = await removeContactService(contactId);
+  if (!contact) {
     throw new NotFoundError("Not found");
   }
   res.json({ message: `Contact with ID ${contactId} deleted succuessfully` });

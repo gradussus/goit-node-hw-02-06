@@ -3,24 +3,33 @@ const { Contact } = require("../schemas/contactsModel");
 const listContactsService = async (owner, page = 1, limit = 100, favorite) => {
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  if (favorite) {
-    const contacts = await Contact.find({ $and: [{ owner }, { favorite }] })
-      .skip(skip)
-      .limit(limit);
+  if (!favorite) {
+    const contacts = await Contact.find({ owner }, "", {
+      skip,
+      limit,
+    });
     return contacts;
   }
-  const contacts = await Contact.find({ owner }).skip(skip).limit(limit);
+  const isFavorite = JSON.parse(favorite);
+  const contacts = await Contact.find(
+    { $and: [{ owner }, { favorite: isFavorite }] },
+    "",
+    {
+      skip,
+      limit,
+    }
+  );
   return contacts;
 };
 
-const getContactByIdService = async (id, owner) => {
-  const contact = await Contact.find({ $and: [{ owner }, { _id: id }] });
+const getContactByIdService = async (contactId, owner) => {
+  const contact = await Contact.findOne({
+    $and: [{ owner }, { _id: contactId }],
+  });
   return contact;
 };
-const removeContactService = async (id, owner) => {
-  const contact = await Contact.findOneAndRemove({
-    $and: [{ owner }, { _id: id }],
-  });
+const removeContactService = async (contactId) => {
+  const contact = await Contact.findByIdAndDelete(contactId);
   return contact;
 };
 

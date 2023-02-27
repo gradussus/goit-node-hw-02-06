@@ -64,7 +64,6 @@ const updateUserService = async (id, subscription) => {
     { $set: { subscription } },
     { new: true }
   );
-  console.log(user);
   return user;
 };
 
