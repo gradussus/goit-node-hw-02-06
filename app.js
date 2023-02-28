@@ -3,6 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 
 const contactsRouter = require("./routes/api/contacts");
+const usersRouter = require("./routes/users");
 
 const { errorHandler } = require("./helpers/apiHelpers");
 
@@ -13,6 +14,8 @@ const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
+
+app.use("/users", usersRouter);
 
 app.use("/api/contacts", contactsRouter);
 

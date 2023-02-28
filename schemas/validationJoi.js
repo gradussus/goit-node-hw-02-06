@@ -17,8 +17,14 @@ const updateContactValidation = Joi.object({
 const updateFavoriteValidation = Joi.object({
   favorite: Joi.boolean().required(),
 });
+
+const loginValidationSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).alphanum().required(),
+});
 module.exports = {
   newContactValidation,
   updateContactValidation,
   updateFavoriteValidation,
+  loginValidationSchema,
 };
