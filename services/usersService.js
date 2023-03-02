@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
+
 const { User } = require("../schemas/userModel");
 const { ConflictError, UnauthorizedError } = require("../helpers/errors");
 
@@ -12,6 +14,7 @@ const signupUserService = async (email, password, subscription) => {
     email,
     password,
     subscription,
+    avatarURL: gravatar.url(email),
   });
 
   await user.save();
