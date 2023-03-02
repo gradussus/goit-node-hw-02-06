@@ -44,10 +44,16 @@ const updateUser = async (req, res) => {
   res.status(200).json({ email: user.email, subscription: user.subscription });
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  res.status(200).json({ asdf: _id });
+};
+
 module.exports = {
   signupUser,
   loginUser,
   logoutUser,
   currentUser,
   updateUser,
+  updateAvatar,
 };
