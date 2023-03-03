@@ -79,7 +79,7 @@ const updateAvatarService = async (id, filename) => {
     avatar.resize(250, 250).write(path.resolve(`./public/avatars/${filename}`))
   );
 
-  const avatarURL = `avatars/${filename}`;
+  const avatarURL = `/avatars/${filename}`;
 
   const user = await User.findByIdAndUpdate(
     id,
