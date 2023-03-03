@@ -13,23 +13,15 @@ const signupUserService = async (email, password, subscription) => {
     throw new ConflictError("Email is use");
   }
 
-  const token = jwt.sign(
-    {
-      _id: user._id,
-    },
-    process.env.JWT_SECRET
-  );
-
   const user = new User({
     email,
     password,
     subscription,
     avatarURL: gravatar.url(email),
-    token,
   });
 
   await user.save();
-  return { email, subscription, token };
+  return { email, subscription };
 };
 
 const loginUserService = async (email, password) => {
