@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs/promises");
+
 const { User } = require("../schemas/userModel");
 const { ConflictError, UnauthorizedError } = require("../helpers/errors");
 
@@ -12,6 +17,7 @@ const signupUserService = async (email, password, subscription) => {
     email,
     password,
     subscription,
+    avatarURL: gravatar.url(email),
   });
 
   await user.save();
@@ -68,10 +74,28 @@ const updateUserService = async (id, subscription) => {
   return user;
 };
 
+const updateAvatarService = async (id, filename) => {
+  Jimp.read(path.resolve(`./tmp/${filename}`)).then((avatar) =>
+    avatar.resize(250, 250).write(path.resolve(`./public/avatars/${filename}`))
+  );
+
+  const avatarURL = `/avatars/${filename}`;
+
+  const user = await User.findByIdAndUpdate(
+    id,
+    { $set: { avatarURL } },
+    { new: true }
+  ).select({
+    avatarURL: 1,
+    _id: 0,
+  });
+  return user;
+};
+
 module.exports = {
   signupUserService,
   loginUserService,
   logoutUserService,
-
   updateUserService,
+  updateAvatarService,
 };

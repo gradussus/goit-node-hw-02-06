@@ -3,6 +3,7 @@ const {
   loginUserService,
   logoutUserService,
   updateUserService,
+  updateAvatarService,
 } = require("../services/usersService");
 
 const { NotFoundError } = require("../helpers/errors");
@@ -44,10 +45,18 @@ const updateUser = async (req, res) => {
   res.status(200).json({ email: user.email, subscription: user.subscription });
 };
 
+const updateAvatar = async (req, res) => {
+  const { filename } = req.file;
+  const { _id } = req.user;
+  const { avatarURL } = await updateAvatarService(_id, filename);
+  res.status(200).json({ avatarURL });
+};
+
 module.exports = {
   signupUser,
   loginUser,
   logoutUser,
   currentUser,
   updateUser,
+  updateAvatar,
 };
