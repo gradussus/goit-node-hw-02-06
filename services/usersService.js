@@ -4,6 +4,8 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const path = require("path");
 const fs = require("fs/promises");
+const sgMail = require("@sendgrid/mail");
+const { v4 } = require("uuid");
 
 const { User } = require("../schemas/userModel");
 const { ConflictError, UnauthorizedError } = require("../helpers/errors");
@@ -13,19 +15,44 @@ const signupUserService = async (email, password, subscription) => {
     throw new ConflictError("Email is use");
   }
 
+  const verificationToken = v4();
+
   const user = new User({
     email,
     password,
     subscription,
     avatarURL: gravatar.url(email),
+    verificationToken,
   });
 
   await user.save();
+
+  const msg = {
+    to: email,
+    from: "shevchenkovitalii@meta.ua",
+    subject: "Please, confirm your registration",
+    text: `Please, confirm your email address: http://localhost:3000/users/verify/${verificationToken}`,
+    html: `Please, confirm your email address: <br/> 
+    <a href="http://localhost:3000/users/verify/${verificationToken}">
+					Confirm!
+				</a>
+    `,
+  };
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
   return { email, subscription };
 };
 
 const loginUserService = async (email, password) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email, verify: true });
 
   if (!user) {
     throw new UnauthorizedError("Email or password is wrong");
@@ -92,10 +119,21 @@ const updateAvatarService = async (id, filename) => {
   return user;
 };
 
+const verificationUserService = async (verificationToken) => {
+  const user = await User.findOneAndUpdate(verificationToken, {
+    $set: { verificationToken: null, verify: true },
+  });
+  if (!user) {
+    throw new NotFoundError("Not found");
+  }
+  return user;
+};
+
 module.exports = {
   signupUserService,
   loginUserService,
   logoutUserService,
   updateUserService,
   updateAvatarService,
+  verificationUserService,
 };

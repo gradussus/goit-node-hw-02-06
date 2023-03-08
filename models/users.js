@@ -4,13 +4,18 @@ const {
   logoutUserService,
   updateUserService,
   updateAvatarService,
+  verificationUserService,
 } = require("../services/usersService");
+require("dotenv").config();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { NotFoundError } = require("../helpers/errors");
 
 const signupUser = async (req, res) => {
   const { email, password, subscription = "starter" } = req.body;
   const user = await signupUserService(email, password, subscription);
+
   res.status(201).json(user);
 };
 
@@ -52,6 +57,13 @@ const updateAvatar = async (req, res) => {
   res.status(200).json({ avatarURL });
 };
 
+const verifictaionUser = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await verificationUserService(verificationToken);
+  res.status(200).json({ message: "Verification successful" });
+};
+
 module.exports = {
   signupUser,
   loginUser,
@@ -59,4 +71,5 @@ module.exports = {
   currentUser,
   updateUser,
   updateAvatar,
+  verifictaionUser,
 };

@@ -9,6 +9,7 @@ const {
   currentUser,
   updateUser,
   updateAvatar,
+  verifictaionUser,
 } = require("../models/users");
 
 const { loginValidation } = require("../middlevares/loginValidation");
@@ -45,5 +46,7 @@ router.patch(
   uploadAvatarMiddlevare.single("avatar"),
   asyncWrapper(updateAvatar)
 );
+
+router.get("/verify/:verificationToken", asyncWrapper(verifictaionUser));
 
 module.exports = router;
