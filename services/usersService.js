@@ -129,6 +129,8 @@ const verificationUserService = async (verificationToken) => {
   return user;
 };
 
+const reVerifictaionUserService = async (verificationToken) => {};
+
 module.exports = {
   signupUserService,
   loginUserService,

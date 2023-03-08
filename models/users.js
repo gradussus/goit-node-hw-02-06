@@ -5,6 +5,7 @@ const {
   updateUserService,
   updateAvatarService,
   verificationUserService,
+  reVerifictaionUserService,
 } = require("../services/usersService");
 require("dotenv").config();
 
@@ -62,6 +63,15 @@ const verifictaionUser = async (req, res) => {
 
   await verificationUserService(verificationToken);
   res.status(200).json({ message: "Verification successful" });
+};
+
+const reVerifictaionUser = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: "missing required field email" });
+  }
+  await reVerifictaionUserService(email);
+  res.status(200).json({ message: "Verification email sent" });
 };
 
 module.exports = {
