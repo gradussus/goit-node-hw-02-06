@@ -4,11 +4,15 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const path = require("path");
 const fs = require("fs/promises");
-const sgMail = require("@sendgrid/mail");
 const { v4 } = require("uuid");
 
+const { sendEmail } = require("../helpers/sendEmail");
 const { User } = require("../schemas/userModel");
-const { ConflictError, UnauthorizedError } = require("../helpers/errors");
+const {
+  ConflictError,
+  UnauthorizedError,
+  Error400,
+} = require("../helpers/errors");
 
 const signupUserService = async (email, password, subscription) => {
   if (await User.findOne({ email })) {
@@ -27,26 +31,7 @@ const signupUserService = async (email, password, subscription) => {
 
   await user.save();
 
-  const msg = {
-    to: email,
-    from: "shevchenkovitalii@meta.ua",
-    subject: "Please, confirm your registration",
-    text: `Please, confirm your email address: http://localhost:3000/users/verify/${verificationToken}`,
-    html: `Please, confirm your email address: <br/> 
-    <a href="http://localhost:3000/users/verify/${verificationToken}">
-					Confirm!
-				</a>
-    `,
-  };
-
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log("Email sent");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  sendEmail(email, verificationToken);
 
   return { email, subscription };
 };
@@ -124,12 +109,21 @@ const verificationUserService = async (verificationToken) => {
     $set: { verificationToken: null, verify: true },
   });
   if (!user) {
-    throw new NotFoundError("Not found");
+    throw new Error400("Not found");
   }
   return user;
 };
 
-const reVerifictaionUserService = async (verificationToken) => {};
+const reVerifictaionUserService = async (email) => {
+  const user = await User.findOne({ email, verify: false });
+  if (!user) {
+    throw new Error400("Not found");
+  }
+
+  const { verificationToken } = user;
+
+  sendEmail(email, verificationToken);
+};
 
 module.exports = {
   signupUserService,
@@ -138,4 +132,5 @@ module.exports = {
   updateUserService,
   updateAvatarService,
   verificationUserService,
+  reVerifictaionUserService,
 };

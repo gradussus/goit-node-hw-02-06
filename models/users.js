@@ -9,6 +9,8 @@ const {
 } = require("../services/usersService");
 require("dotenv").config();
 
+const sgMail = require("@sendgrid/mail");
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { NotFoundError } = require("../helpers/errors");
@@ -70,6 +72,12 @@ const reVerifictaionUser = async (req, res) => {
   if (!email) {
     res.status(400).json({ message: "missing required field email" });
   }
+
+  const verifyUser = await User.findOne({ email, verify: true });
+  if (verifyUser) {
+    res.status(400).json({ message: "Verification has already been passed" });
+  }
+
   await reVerifictaionUserService(email);
   res.status(200).json({ message: "Verification email sent" });
 };
@@ -82,4 +90,5 @@ module.exports = {
   updateUser,
   updateAvatar,
   verifictaionUser,
+  reVerifictaionUser,
 };
