@@ -3,6 +3,7 @@ const {
   UnauthorizedError,
   NotFoundError,
   Error400,
+  Error404,
 } = require("./errors");
 
 const asyncWrapper = (controller) => {
@@ -16,6 +17,7 @@ const errorHandler = (error, req, res, next) => {
     error instanceof ConflictError ||
     error instanceof UnauthorizedError ||
     error instanceof NotFoundError ||
+    error instanceof Error404 ||
     error instanceof Error400
   ) {
     return res.status(error.status).json({ message: error.message });

@@ -75,11 +75,6 @@ const reVerifictaionUser = async (req, res) => {
     res.status(400).json({ message: "missing required field email" });
   }
 
-  const verifyUser = await User.findOne({ email, verify: true });
-  if (verifyUser) {
-    res.status(400).json({ message: "Verification has already been passed" });
-  }
-
   await reVerifictaionUserService(email);
   res.status(200).json({ message: "Verification email sent" });
 };

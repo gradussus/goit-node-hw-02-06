@@ -22,10 +22,17 @@ class Error400 extends Error {
     this.status = 400;
   }
 }
+class Error404 extends Error {
+  constructor(message) {
+    super(message);
+    this.status = 404;
+  }
+}
 
 module.exports = {
   ConflictError,
   UnauthorizedError,
   NotFoundError,
   Error400,
+  Error404,
 };

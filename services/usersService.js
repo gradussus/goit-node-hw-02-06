@@ -12,6 +12,7 @@ const {
   ConflictError,
   UnauthorizedError,
   Error400,
+  Error404,
 } = require("../helpers/errors");
 
 const signupUserService = async (email, password, subscription) => {
@@ -113,7 +114,7 @@ const verificationUserService = async (verificationToken) => {
   );
 
   if (!user) {
-    throw new Error400("Not found");
+    throw new Error404("Not found");
   }
   return user;
 };
@@ -121,7 +122,12 @@ const verificationUserService = async (verificationToken) => {
 const reVerifictaionUserService = async (email) => {
   const user = await User.findOne({ email, verify: false });
   if (!user) {
-    throw new Error400("Not found");
+    throw new Error404("User not found");
+  }
+
+  const verifyUser = await User.findOne({ email, verify: true });
+  if (verifyUser) {
+    throw new Error400("Verification has already been passed");
   }
 
   const { verificationToken } = user;
