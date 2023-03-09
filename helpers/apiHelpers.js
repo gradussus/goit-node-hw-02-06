@@ -1,4 +1,9 @@
-const { ConflictError, UnauthorizedError, NotFoundError } = require("./errors");
+const {
+  ConflictError,
+  UnauthorizedError,
+  NotFoundError,
+  Error400,
+} = require("./errors");
 
 const asyncWrapper = (controller) => {
   return (req, res, next) => {
@@ -10,7 +15,8 @@ const errorHandler = (error, req, res, next) => {
   if (
     error instanceof ConflictError ||
     error instanceof UnauthorizedError ||
-    error instanceof NotFoundError
+    error instanceof NotFoundError ||
+    error instanceof Error400
   ) {
     return res.status(error.status).json({ message: error.message });
   }

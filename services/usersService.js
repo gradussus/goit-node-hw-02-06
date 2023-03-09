@@ -105,9 +105,13 @@ const updateAvatarService = async (id, filename) => {
 };
 
 const verificationUserService = async (verificationToken) => {
-  const user = await User.findOneAndUpdate(verificationToken, {
-    $set: { verificationToken: null, verify: true },
-  });
+  const user = await User.findOneAndUpdate(
+    { verificationToken },
+    {
+      $set: { verificationToken: null, verify: true },
+    }
+  );
+
   if (!user) {
     throw new Error400("Not found");
   }

@@ -50,10 +50,6 @@ router.patch(
 
 router.get("/verify/:verificationToken", asyncWrapper(verifictaionUser));
 
-router.post(
-  "/verify/",
-
-  asyncWrapper(reVerifictaionUser)
-);
+router.post("/verify", asyncWrapper(reVerifictaionUser));
 
 module.exports = router;
