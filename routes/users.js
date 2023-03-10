@@ -9,15 +9,21 @@ const {
   currentUser,
   updateUser,
   updateAvatar,
+  verifictaionUser,
+  reVerifictaionUser,
 } = require("../models/users");
 
 const { loginValidation } = require("../middlevares/loginValidation");
+const { emailValidation } = require("../middlevares/emailValidation");
 const { authMiddleware } = require("../middlevares/authMiddlevare");
 const {
   uploadAvatarMiddlevare,
 } = require("../middlevares/uploadAvatarMiddlevare");
 
-const { loginValidationSchema } = require("../schemas/validationJoi");
+const {
+  loginValidationSchema,
+  emailValidationSchema,
+} = require("../schemas/validationJoi");
 
 const router = express.Router();
 
@@ -44,6 +50,14 @@ router.patch(
   authMiddleware,
   uploadAvatarMiddlevare.single("avatar"),
   asyncWrapper(updateAvatar)
+);
+
+router.get("/verify/:verificationToken", asyncWrapper(verifictaionUser));
+
+router.post(
+  "/verify",
+  emailValidation(emailValidationSchema),
+  asyncWrapper(reVerifictaionUser)
 );
 
 module.exports = router;

@@ -22,9 +22,15 @@ const loginValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).alphanum().required(),
 });
+
+const emailValidationSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 module.exports = {
   newContactValidation,
   updateContactValidation,
   updateFavoriteValidation,
   loginValidationSchema,
+  emailValidationSchema,
 };

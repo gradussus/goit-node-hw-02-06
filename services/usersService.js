@@ -4,28 +4,41 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const path = require("path");
 const fs = require("fs/promises");
+const { v4 } = require("uuid");
 
+const { sendEmail } = require("../helpers/sendEmail");
 const { User } = require("../schemas/userModel");
-const { ConflictError, UnauthorizedError } = require("../helpers/errors");
+const {
+  ConflictError,
+  UnauthorizedError,
+  Error400,
+  Error404,
+} = require("../helpers/errors");
 
 const signupUserService = async (email, password, subscription) => {
   if (await User.findOne({ email })) {
     throw new ConflictError("Email is use");
   }
 
+  const verificationToken = v4();
+
   const user = new User({
     email,
     password,
     subscription,
     avatarURL: gravatar.url(email),
+    verificationToken,
   });
 
   await user.save();
+
+  sendEmail(email, verificationToken);
+
   return { email, subscription };
 };
 
 const loginUserService = async (email, password) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email, verify: true });
 
   if (!user) {
     throw new UnauthorizedError("Email or password is wrong");
@@ -92,10 +105,52 @@ const updateAvatarService = async (id, filename) => {
   return user;
 };
 
+const verificationUserService = async (verificationToken) => {
+  const user = await User.findOneAndUpdate(
+    { verificationToken },
+    {
+      $set: { verificationToken: null, verify: true },
+    }
+  );
+
+  if (!user) {
+    throw new Error404("Not found");
+  }
+  return user;
+};
+
+const reVerifictaionUserService = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error404("User not found");
+  }
+  console.log(user.verify);
+  if (user.verify === true) {
+    throw new Error400("Verification has already been passed");
+  }
+
+  // const user = await User.findOne({ email, verify: false });
+  // if (!user) {
+  //   throw new Error404("User not found");
+  // }
+
+  // const verifyUser = await User.findOne({ email, verify: true });
+  // if (verifyUser) {
+  //   throw new Error400("Verification has already been passed");
+  // }
+
+  const { verificationToken } = user;
+
+  sendEmail(email, verificationToken);
+};
+
 module.exports = {
   signupUserService,
   loginUserService,
   logoutUserService,
   updateUserService,
   updateAvatarService,
+  verificationUserService,
+  reVerifictaionUserService,
 };

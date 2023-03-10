@@ -4,13 +4,17 @@ const {
   logoutUserService,
   updateUserService,
   updateAvatarService,
+  verificationUserService,
+  reVerifictaionUserService,
 } = require("../services/usersService");
+require("dotenv").config();
 
 const { NotFoundError } = require("../helpers/errors");
 
 const signupUser = async (req, res) => {
   const { email, password, subscription = "starter" } = req.body;
   const user = await signupUserService(email, password, subscription);
+
   res.status(201).json(user);
 };
 
@@ -52,6 +56,23 @@ const updateAvatar = async (req, res) => {
   res.status(200).json({ avatarURL });
 };
 
+const verifictaionUser = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await verificationUserService(verificationToken);
+  res.status(200).json({ message: "Verification successful" });
+};
+
+const reVerifictaionUser = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: "missing required field email" });
+  }
+
+  await reVerifictaionUserService(email);
+  res.status(200).json({ message: "Verification email sent" });
+};
+
 module.exports = {
   signupUser,
   loginUser,
@@ -59,4 +80,6 @@ module.exports = {
   currentUser,
   updateUser,
   updateAvatar,
+  verifictaionUser,
+  reVerifictaionUser,
 };
