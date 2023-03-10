@@ -120,15 +120,25 @@ const verificationUserService = async (verificationToken) => {
 };
 
 const reVerifictaionUserService = async (email) => {
-  const user = await User.findOne({ email, verify: false });
+  const user = await User.findOne({ email });
+
   if (!user) {
     throw new Error404("User not found");
   }
-
-  const verifyUser = await User.findOne({ email, verify: true });
-  if (verifyUser) {
+  console.log(user.verify);
+  if (user.verify === true) {
     throw new Error400("Verification has already been passed");
   }
+
+  // const user = await User.findOne({ email, verify: false });
+  // if (!user) {
+  //   throw new Error404("User not found");
+  // }
+
+  // const verifyUser = await User.findOne({ email, verify: true });
+  // if (verifyUser) {
+  //   throw new Error400("Verification has already been passed");
+  // }
 
   const { verificationToken } = user;
 
